@@ -19,7 +19,6 @@ from django.conf.urls import url
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
-from priorities.views import priorities
 from todos.views import TodoViewSet
 from rest_framework.routers import DefaultRouter
 
@@ -46,5 +45,4 @@ urlpatterns = [
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
-    path('priorities/', priorities)
 ] + router.urls
