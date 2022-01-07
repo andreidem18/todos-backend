@@ -11,32 +11,23 @@ class PrioritySerializer(serializers.ModelSerializer):
         model = Priority
         fields = ('id', 'priority')
 
-class ItemSerializer(serializers.ModelSerializer):
+class TodoSerializer(serializers.ModelSerializer):
     priority = PrioritySerializer(read_only=True)
     class Meta:
-        model = Item
-        fields = ('id', 'item', 'todo', 'priority')
-
-class TodoSerializer(serializers.ModelSerializer):
-    items = ItemSerializer(read_only=True, many=True)
+        model = Todo
+        fields = ('id', 'title', 'description', 'deadline', 'done', 'priority')
+        
+class CreateTodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
-        fields = ('id', 'title', 'description', 'deadline', 'items')
+        fields = ('id', 'title', 'description', 'deadline', 'done', 'priority')
 
 
 class TodoViewSet(viewsets.ModelViewSet):
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
     
-    def create(self, request, *args, **kwargs):
-        todo = Todo.objects.create(
-            title = request.data['title'], description = request.data['description'], deadline = request.data['deadline']
-        )
-        for i in request.data['items']:
-            Item.objects.create(
-                item = i['item'],
-                todo = todo,
-                priority = Priority.objects.get(id = i['priority'])
-            )
-        serialized = TodoSerializer(todo)
-        return Response(status = status.HTTP_201_CREATED, data = serialized.data)
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CreateTodoSerializer
+        return super().get_serializer_class()
