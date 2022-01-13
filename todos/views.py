@@ -5,7 +5,7 @@ from rest_framework import serializers, viewsets
 class TodoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
-        fields = ('id', 'title', 'description', 'isComplete')
+        fields = ('id', 'title', 'description', 'isCompleted')
 
 
 class TodoViewSet(viewsets.ModelViewSet):
