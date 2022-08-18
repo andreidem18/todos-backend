@@ -1,6 +1,10 @@
 from django.shortcuts import render
+
+from config.get_client_ip import get_client_ip
 from .models import Todo
 from rest_framework import serializers, viewsets
+from rest_framework.response import Response
+from rest_framework import status
 
 class TodoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,3 +15,16 @@ class TodoSerializer(serializers.ModelSerializer):
 class TodoViewSet(viewsets.ModelViewSet):
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
+
+    
+    def create(self, request, *args, **kwargs):
+        car = Todo.objects.create(
+            model=request.data['model'], 
+            brand=request.data['brand'], 
+            color=request.data['color'], 
+            year=request.data['year'], 
+            price=request.data['price'],
+            created_by=get_client_ip(request)
+        )
+        serialized = TodoSerializer(car)
+        return Response(status = status.HTTP_201_CREATED, data = serialized.data)
