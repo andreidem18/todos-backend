@@ -19,11 +19,12 @@ class TodoViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         car = Todo.objects.create(
-            model=request.data['model'], 
-            brand=request.data['brand'], 
-            color=request.data['color'], 
-            year=request.data['year'], 
-            price=request.data['price'],
+            title=request.data['title'],
+            description=request.data['description'],
+            isCompleted=request.data['isCompleted'],
+            created_by=request.data['created_by'],
+            created_at=request.data['created_at'],
+            updated_at=request.data['updated_at'],
             created_by=get_client_ip(request)
         )
         serialized = TodoSerializer(car)
