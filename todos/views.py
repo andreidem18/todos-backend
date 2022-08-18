@@ -22,8 +22,6 @@ class TodoViewSet(viewsets.ModelViewSet):
             title=request.data['title'],
             description=request.data['description'],
             isCompleted=request.data['isCompleted'],
-            created_at=request.data['created_at'],
-            updated_at=request.data['updated_at'],
             created_by=get_client_ip(request)
         )
         serialized = TodoSerializer(car)
