@@ -16,6 +16,11 @@ class TodoViewSet(viewsets.ModelViewSet):
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset().filter(created_by=get_client_ip(request))
+        serialized = MovieSerializer(queryset, many=True)
+        return Response(serialized.data)
+
     
     def create(self, request, *args, **kwargs):
         car = Todo.objects.create(
