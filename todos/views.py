@@ -18,7 +18,7 @@ class TodoViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset().filter(created_by=get_client_ip(request))
-        serialized = MovieSerializer(queryset, many=True)
+        serialized = TodoSerializer(queryset, many=True)
         return Response(serialized.data)
 
     
