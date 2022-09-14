@@ -11,6 +11,10 @@ class TodoSerializer(serializers.ModelSerializer):
         model = Todo
         fields = ('id', 'title', 'description', 'isCompleted')
 
+class CreateTodoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Todo
+        fields = ('id', 'title', 'description', 'isCompleted', 'created_by')
 
 class TodoViewSet(viewsets.ModelViewSet):
     queryset = Todo.objects.all()
@@ -23,11 +27,11 @@ class TodoViewSet(viewsets.ModelViewSet):
 
     
     def create(self, request, *args, **kwargs):
-        car = Todo.objects.create(
-            title=request.data['title'],
-            description=request.data['description'],
-            isCompleted=request.data['isCompleted'],
-            created_by=get_client_ip(request)
-        )
-        serialized = TodoSerializer(car)
-        return Response(status = status.HTTP_201_CREATED, data = serialized.data)
+        request.data['created_by']=get_client_ip(request)
+        serialized = CreateTodoSerializer(data=request.data)
+        if not serialized.is_valid():
+            return Response(status = status.HTTP_400_BAD_REQUEST, data = serialized.errors)
+        else:
+            serialized.save()
+            serialized = TodoSerializer(serialized.data)
+            return Response(status = status.HTTP_201_CREATED, data = serialized.data)
